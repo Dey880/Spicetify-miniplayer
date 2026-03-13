@@ -8,22 +8,42 @@
   ) {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  
+
   // your code here
   console.log("Popout miniplayer is loaded");
-  
+
   async function openMiniplayer() {
     const win = window.open(
       "about:blank",
       "NowPlaying",
       "width=300,height=150,left=100,top=100,resizable=yes,toolbar=no,menubar=no",
     );
-    
+
     const doc = win.document;
-    doc.write(window.MINIPLAYER_HTML);
+    doc.write(`
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MiniPlayer</title>
+  </head>
+  <body>
+    <h1 id="track">LESGOOOOOOOOOOOO</h1>
+    <script>
+      const queue = Spicetify.Queue;
+      console.log(Spicetify.Queue);
+      const currentTrack = queue.track;
+      let element = document.getElementById('track');
+      element.textContent(currentTrack);
+      console.log(currentTrack);
+    </script>
+  </body>
+</html>
+`);
     doc.close();
   }
-  
+
   async function createButton() {
     let container;
     while (!container) {
