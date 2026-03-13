@@ -8,24 +8,22 @@
   ) {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-
+  
   // your code here
   console.log("Popout miniplayer is loaded");
-
-  function openMiniplayer() {
+  
+  async function openMiniplayer() {
     const win = window.open(
       "about:blank",
       "NowPlaying",
       "width=300,height=150,left=100,top=100,resizable=yes,toolbar=no,menubar=no",
     );
-
+    
     const doc = win.document;
-    doc.write(
-      `<!DOCTYPE html><html><head><style></style></head><body><h1>HELLOOOOO</h1></body></html>`,
-    );
+    doc.write(window.MINIPLAYER_HTML);
     doc.close();
   }
-
+  
   async function createButton() {
     let container;
     while (!container) {
@@ -83,8 +81,8 @@
     function mouseEnter() {}
     function mouseLeave() {}
 
-    btn.addEventListener("mouseenter", mouseEnter());
-    btn.addEventListener("mouseleave", mouseLeave());
+    btn.addEventListener("mouseenter", mouseEnter);
+    btn.addEventListener("mouseleave", mouseLeave);
     btn.addEventListener("click", openMiniplayer);
 
     container.appendChild(btn);
