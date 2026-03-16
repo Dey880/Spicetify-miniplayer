@@ -12,13 +12,76 @@
   // your code here
   console.log("Popout miniplayer is loaded");
 
-  async function openMiniplayer() {
-    const win = window.open(
-      "about:blank",
-      "NowPlaying",
-      "width=300,height=150,left=100,top=100,resizable=yes,toolbar=no,menubar=no",
-    );
+//   async function openMiniplayer() {
+//     const win = window.open(
+//       "about:blank",
+//       "NowPlaying",
+//       "width=300,height=150,left=100,top=100,resizable=yes,toolbar=no,menubar=no",
+//     );
 
+//     const doc = win.document;
+//     doc.write(`
+// <!doctype html>
+// <html lang="en">
+//   <head>
+//     <meta charset="UTF-8" />
+//     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+//     <title>MiniPlayer</title>
+//   </head>
+//   <body>
+//     <h1 id="track">LESGOOOOOOOOOOOO</h1>
+//     <script>
+//       const queue = Spicetify.Queue;
+//       console.log(Spicetify.Queue);
+//       const currentTrack = queue.track;
+//       let element = document.getElementById('track');
+//       element.textContent(currentTrack);
+//       console.log(currentTrack);
+//     </script>
+//   </body>
+// </html>
+// `);
+//     doc.close();
+//   }
+
+  let pipWindow = null;
+
+  const CONFIG = {
+    pipWidth: 350,
+    pipHeight: 500,
+    updateInterval: 100,
+    defaultFontSize: 14,
+    maxFontSize: 28,
+    minFontSize: 10,
+  };
+  async function openPictureInPicture() {
+    // Close existing PiP window if open
+    if (pipWindow && !pipWindow.closed) {
+      pipWindow.close();
+      pipWindow = null;
+      return;
+    }
+
+    // Check for Document Picture-in-Picture API (Chrome 116+)
+    if ("documentPictureInPicture" in window) {
+      try {
+        pipWindow = await window.documentPictureInPicture.requestWindow({
+          width: CONFIG.pipWidth,
+          height: CONFIG.pipHeight,
+        });
+
+        setupPipWindow(pipWindow);
+        return;
+      } catch (err) {
+        console.log(
+          "[Lyric Miniplayer] Document PiP failed, trying fallback:",
+          err,
+        );
+      }
+    }
+  }
+
+  function setupPipWindow(win) {
     const doc = win.document;
     doc.write(`
 <!doctype html>
@@ -103,7 +166,7 @@
 
     btn.addEventListener("mouseenter", mouseEnter);
     btn.addEventListener("mouseleave", mouseLeave);
-    btn.addEventListener("click", openMiniplayer);
+    btn.addEventListener("click", openPictureInPicture);
 
     container.appendChild(btn);
   }
