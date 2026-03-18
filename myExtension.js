@@ -71,7 +71,7 @@
   let currentTrackUri = null;
   let updateIntervalId = null;
   let fontSize = 14; // Prob check ???
-  let currentTheme = "forest";
+  let currentTheme = "spotify";
 
   // Load saved settings
   try {
@@ -111,6 +111,117 @@
             color: #ffffff;
             display: flex;
             flex-direction: column;
+            position: relative;
+        }
+
+        :root {
+            --spice-star: #ffffff;
+            --spice-star-glow: rgba(255, 255, 255, 0.55);
+            --spice-shooting-star: #ffffff;
+            --spice-rgb-shooting-star-glow: 255,255,255;
+        }
+
+        .starrynight-bg-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: transparent;
+        }
+
+        body > *:not(.starrynight-bg-container) {
+            position: relative;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 0;
+            background-color: var(--spice-star);
+        }
+
+        @keyframes twinkle1 {
+            0% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            20% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            40% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            60% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            80% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            100% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+        }
+
+        @keyframes twinkle2 {
+            0% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            20% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            40% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            60% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            80% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            100% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+        }
+
+        @keyframes twinkle3 {
+            0% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            20% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            40% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            60% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            80% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            100% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+        }
+
+        @keyframes twinkle4 {
+            0% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            20% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+            40% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            60% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            80% { box-shadow: 0 0 8px 2px var(--spice-star-glow); }
+            100% { box-shadow: 0 0 -8px 2px var(--spice-star-glow); }
+        }
+
+        /*
+        Pure CSS Shooting Star Animation Effect Copyright (c) 2021 by Delroy Prithvi (https://codepen.io/delroyprithvi/pen/LYyJROR)
+
+        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, includin[...]
+
+        The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT[...]
+        */
+
+        .shootingstar {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--spice-shooting-star);
+            border-radius: 50%;
+            animation: shootingStar 3s linear;
+            left: initial;
+            z-index: 0;
+        }
+
+        .shootingstar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--spice-shooting-star), transparent);
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: rotate(315deg) translateX(0);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(315deg) translateX(-1500px);
+                opacity: 0;
+            }
         }
 
         /* Resize Handle at Top - Subtle */
@@ -584,200 +695,15 @@
         }
 
         .ctrl-btn.liked {
-            color: #1ed760;
+            color: var(--accent);
         }
 
         .ctrl-btn.liked svg {
-            fill: #1ed760;
+            fill: var(--accent);
         }
 
         .ctrl-btn.hidden {
             display: none;
-        }
-
-        /* Lyrics Container */
-        .lyrics-wrap {
-            flex: 1 1 auto;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 12px;
-            scroll-behavior: smooth;
-            -webkit-app-region: no-drag;
-            app-region: no-drag;
-            min-height: 0;
-        }
-
-        .lyrics-wrap.centered {
-            text-align: center;
-        }
-
-        .lyrics-wrap.centered .lyric {
-            transform-origin: center center;
-        }
-
-        .lyrics-wrap.collapsed {
-            display: none;
-        }
-
-        .lyrics-wrap::-webkit-scrollbar {
-            display: none;
-        }
-
-        .lyrics-wrap {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE/Edge */
-        }
-
-        .lyric {
-            padding: 5px 0;
-            opacity: 0.3;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            line-height: 1.35;
-            transform-origin: left center;
-        }
-
-        .lyric:hover {
-            opacity: 0.5;
-        }
-
-        .lyric.active {
-            opacity: 1;
-            color: var(--accent);
-            font-weight: 500;
-            transform: scale(1.02);
-            text-shadow: 0 0 20px var(--text-glow);
-        }
-
-        .lyric.past {
-            opacity: 0.4;
-        }
-
-        /* No Lyrics / Loading */
-        .status-msg {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            text-align: center;
-            padding: 20px;
-            opacity: 0.6;
-        }
-
-        .status-msg .icon {
-            font-size: 40px;
-            margin-bottom: 12px;
-        }
-
-        .status-msg .text {
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        .status-msg .subtext {
-            font-size: 12px;
-            opacity: 0.6;
-            margin-top: 4px;
-        }
-
-        .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Footer */
-        .footer {
-            background: ${t.footerBg};
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            flex-shrink: 0;
-            padding: 6px 10px;
-            -webkit-app-region: no-drag;
-            app-region: no-drag;
-        }
-
-        /* Hide footer when all rows are collapsed */
-        .footer:not(:has(.footer-row:not(.collapsed))) {
-            display: none;
-        }
-
-        .footer-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .footer-row.collapsed {
-            display: none;
-        }
-
-        .footer-row.collapsed + .footer-row:not(.collapsed) {
-            /* No extra spacing when previous row is collapsed */
-        }
-
-        .footer-row:not(.collapsed) + .footer-row:not(.collapsed) {
-            margin-top: 6px;
-            padding-top: 6px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .control-label {
-            font-size: 9px;
-            color: rgba(255, 255, 255, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            min-width: 24px;
-        }
-
-        .slider {
-            -webkit-appearance: none;
-            flex: 1;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 2px;
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 10px;
-            height: 10px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .volume-icon {
-            width: 14px;
-            height: 14px;
-            fill: rgba(255, 255, 255, 0.5);
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: fill 0.15s;
-        }
-
-        .volume-icon:hover {
-            fill: #fff;
-        }
-
-        .value-display {
-            font-size: 10px;
-            color: rgba(255, 255, 255, 0.5);
-            min-width: 28px;
-            text-align: right;
         }
     `;
   }
@@ -843,6 +769,100 @@
       .join("");
   }
 
+    function initStarryNightBackground(win) {
+        const doc = win.document;
+        const bg = doc.getElementById("starryBg");
+        if (!bg) return;
+
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function clearBackground() {
+            while (bg.firstChild) bg.removeChild(bg.firstChild);
+        }
+
+        function createStars() {
+            const area = win.innerWidth * win.innerHeight;
+            const starsFraction = area / 4000;
+
+            for (let i = 0; i < starsFraction; i++) {
+                const size = Math.random() < 0.5 ? 1 : 2;
+                const star = doc.createElement("div");
+                star.className = "star";
+                star.style.left = `${random(0, 99)}%`;
+                star.style.top = `${random(0, 99)}%`;
+                star.style.opacity = random(0.5, 1);
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+
+                if (Math.random() < 1 / 5) {
+                    star.style.setProperty(
+                        "animation",
+                        `twinkle${Math.floor(Math.random() * 4) + 1} 5s infinite`,
+                        "important",
+                    );
+                }
+
+                bg.appendChild(star);
+            }
+        }
+
+        function createShootingStars() {
+            for (let i = 0; i < 4; i++) {
+                const shootingstar = doc.createElement("span");
+                shootingstar.className = "shootingstar";
+
+                if (Math.random() < 0.75) {
+                    shootingstar.style.top = "-4px";
+                    shootingstar.style.right = `${random(0, 90)}%`;
+                } else {
+                    shootingstar.style.top = `${random(0, 50)}%`;
+                    shootingstar.style.right = "-4px";
+                }
+
+                const shootingStarGlowColor = "rgba(255,255,255,0.1)";
+                shootingstar.style.boxShadow =
+                    `0 0 0 4px ${shootingStarGlowColor}, ` +
+                    `0 0 0 8px ${shootingStarGlowColor}, ` +
+                    `0 0 20px ${shootingStarGlowColor}`;
+
+                shootingstar.style.animationDuration = `${Math.floor(Math.random() * 3) + 3}s`;
+                shootingstar.style.animationDelay = `${Math.floor(Math.random() * 7)}s`;
+
+                bg.appendChild(shootingstar);
+
+                shootingstar.addEventListener("animationend", () => {
+                    if (Math.random() < 0.75) {
+                        shootingstar.style.top = "-4px";
+                        shootingstar.style.right = `${random(0, 90)}%`;
+                    } else {
+                        shootingstar.style.top = `${random(0, 50)}%`;
+                        shootingstar.style.right = "-4px";
+                    }
+
+                    shootingstar.style.animation = "none";
+                    void shootingstar.offsetWidth;
+                    shootingstar.style.animation = "";
+                    shootingstar.style.setProperty(
+                        "animation-duration",
+                        `${Math.floor(Math.random() * 4) + 3}s`,
+                        "important",
+                    );
+                });
+            }
+        }
+
+        function build() {
+            clearBackground();
+            createStars();
+            createShootingStars();
+        }
+
+        build();
+        win.addEventListener("resize", build);
+    }
+
   function setupPipWindow(win) {
     const doc = win.document;
 
@@ -852,10 +872,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>♫ Lyrics</title>
+    <title>Prettier Miniplayer</title>
     <style id="themeStyles">${generateStyles(currentTheme)}</style>
 </head>
 <body>
+    <div class="starrynight-bg-container" id="starryBg"></div>
     <div class="resize-handle" id="resizeHandle" title="Drag to resize"></div>
     <div class="header" id="dragHeader" title="Drag to move window">
         <img class="album-art" id="albumArt" src="" alt="">
@@ -931,6 +952,7 @@
 </body>
 </html>`);
     doc.close();
+    initStarryNightBackground(win);
   }
 
   async function createButton() {
