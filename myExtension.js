@@ -13,8 +13,8 @@
 
   // Config
   const CONFIG = {
-    pipWidth: 280,
-    pipHeight: 360,
+    pipWidth: 400,
+    pipHeight: 400,
     updateInterval: 100,
   };
 
@@ -70,8 +70,7 @@
   let pipWindow = null;
   let currentTrackUri = null;
   let updateIntervalId = null;
-  let fontSize = 14; // Prob check ???
-  let currentTheme = "spotify";
+  let currentTheme = "forest";
 
   // Load saved settings
   try {
@@ -694,6 +693,10 @@
             color: var(--accent);
         }
 
+        .ctrl-btn.repeat-on {
+          color: var(--accent);
+        }
+
         .ctrl-btn.liked {
             color: var(--accent);
         }
@@ -769,99 +772,99 @@
       .join("");
   }
 
-    function initStarryNightBackground(win) {
-        const doc = win.document;
-        const bg = doc.getElementById("starryBg");
-        if (!bg) return;
+  function initStarryNightBackground(win) {
+    const doc = win.document;
+    const bg = doc.getElementById("starryBg");
+    if (!bg) return;
 
-        function random(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        function clearBackground() {
-            while (bg.firstChild) bg.removeChild(bg.firstChild);
-        }
-
-        function createStars() {
-            const area = win.innerWidth * win.innerHeight;
-            const starsFraction = area / 4000;
-
-            for (let i = 0; i < starsFraction; i++) {
-                const size = Math.random() < 0.5 ? 1 : 2;
-                const star = doc.createElement("div");
-                star.className = "star";
-                star.style.left = `${random(0, 99)}%`;
-                star.style.top = `${random(0, 99)}%`;
-                star.style.opacity = random(0.5, 1);
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-
-                if (Math.random() < 1 / 5) {
-                    star.style.setProperty(
-                        "animation",
-                        `twinkle${Math.floor(Math.random() * 4) + 1} 5s infinite`,
-                        "important",
-                    );
-                }
-
-                bg.appendChild(star);
-            }
-        }
-
-        function createShootingStars() {
-            for (let i = 0; i < 4; i++) {
-                const shootingstar = doc.createElement("span");
-                shootingstar.className = "shootingstar";
-
-                if (Math.random() < 0.75) {
-                    shootingstar.style.top = "-4px";
-                    shootingstar.style.right = `${random(0, 90)}%`;
-                } else {
-                    shootingstar.style.top = `${random(0, 50)}%`;
-                    shootingstar.style.right = "-4px";
-                }
-
-                const shootingStarGlowColor = "rgba(255,255,255,0.1)";
-                shootingstar.style.boxShadow =
-                    `0 0 0 4px ${shootingStarGlowColor}, ` +
-                    `0 0 0 8px ${shootingStarGlowColor}, ` +
-                    `0 0 20px ${shootingStarGlowColor}`;
-
-                shootingstar.style.animationDuration = `${Math.floor(Math.random() * 3) + 3}s`;
-                shootingstar.style.animationDelay = `${Math.floor(Math.random() * 7)}s`;
-
-                bg.appendChild(shootingstar);
-
-                shootingstar.addEventListener("animationend", () => {
-                    if (Math.random() < 0.75) {
-                        shootingstar.style.top = "-4px";
-                        shootingstar.style.right = `${random(0, 90)}%`;
-                    } else {
-                        shootingstar.style.top = `${random(0, 50)}%`;
-                        shootingstar.style.right = "-4px";
-                    }
-
-                    shootingstar.style.animation = "none";
-                    void shootingstar.offsetWidth;
-                    shootingstar.style.animation = "";
-                    shootingstar.style.setProperty(
-                        "animation-duration",
-                        `${Math.floor(Math.random() * 4) + 3}s`,
-                        "important",
-                    );
-                });
-            }
-        }
-
-        function build() {
-            clearBackground();
-            createStars();
-            createShootingStars();
-        }
-
-        build();
-        win.addEventListener("resize", build);
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
     }
+
+    function clearBackground() {
+      while (bg.firstChild) bg.removeChild(bg.firstChild);
+    }
+
+    function createStars() {
+      const area = win.innerWidth * win.innerHeight;
+      const starsFraction = area / 4000;
+
+      for (let i = 0; i < starsFraction; i++) {
+        const size = Math.random() < 0.5 ? 1 : 2;
+        const star = doc.createElement("div");
+        star.className = "star";
+        star.style.left = `${random(0, 99)}%`;
+        star.style.top = `${random(0, 99)}%`;
+        star.style.opacity = random(0.5, 1);
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+
+        if (Math.random() < 1 / 5) {
+          star.style.setProperty(
+            "animation",
+            `twinkle${Math.floor(Math.random() * 4) + 1} 5s infinite`,
+            "important",
+          );
+        }
+
+        bg.appendChild(star);
+      }
+    }
+
+    function createShootingStars() {
+      for (let i = 0; i < 4; i++) {
+        const shootingstar = doc.createElement("span");
+        shootingstar.className = "shootingstar";
+
+        if (Math.random() < 0.75) {
+          shootingstar.style.top = "-4px";
+          shootingstar.style.right = `${random(0, 90)}%`;
+        } else {
+          shootingstar.style.top = `${random(0, 50)}%`;
+          shootingstar.style.right = "-4px";
+        }
+
+        const shootingStarGlowColor = "rgba(255,255,255,0.1)";
+        shootingstar.style.boxShadow =
+          `0 0 0 4px ${shootingStarGlowColor}, ` +
+          `0 0 0 8px ${shootingStarGlowColor}, ` +
+          `0 0 20px ${shootingStarGlowColor}`;
+
+        shootingstar.style.animationDuration = `${Math.floor(Math.random() * 3) + 3}s`;
+        shootingstar.style.animationDelay = `${Math.floor(Math.random() * 7)}s`;
+
+        bg.appendChild(shootingstar);
+
+        shootingstar.addEventListener("animationend", () => {
+          if (Math.random() < 0.75) {
+            shootingstar.style.top = "-4px";
+            shootingstar.style.right = `${random(0, 90)}%`;
+          } else {
+            shootingstar.style.top = `${random(0, 50)}%`;
+            shootingstar.style.right = "-4px";
+          }
+
+          shootingstar.style.animation = "none";
+          void shootingstar.offsetWidth;
+          shootingstar.style.animation = "";
+          shootingstar.style.setProperty(
+            "animation-duration",
+            `${Math.floor(Math.random() * 4) + 3}s`,
+            "important",
+          );
+        });
+      }
+    }
+
+    function build() {
+      clearBackground();
+      createStars();
+      createShootingStars();
+    }
+
+    build();
+    win.addEventListener("resize", build);
+  }
 
   function setupPipWindow(win) {
     const doc = win.document;
@@ -945,6 +948,9 @@
         <button class="ctrl-btn" id="shuffleBtn" title="Shuffle">
             <svg viewBox="0 0 16 16" id="shuffleIcon"><path d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a3.75 3.75 0 0 0-2.873 1.34l-6.173 7.356A2.25 2.25 0 0 1 .39 12.5H0V14h.391a3.75 3.75 0 0 0 2.873-1.34l6.173-7.356a2.25 2.25 0 0 1 1.724-.804h1.947l-1.017 1.018a.75.75 0 0 0 1.06 1.06l2.306-2.306a.75.75 0 0 0 0-1.06L13.15.922zM.391 3.5H0V2h.391c1.109 0 2.16.49 2.873 1.34L4.89 5.277l-.979 1.167-1.796-2.14A2.25 2.25 0 0 0 .39 3.5z"/><path d="m7.5 10.723.98-1.167 1.796 2.14a2.25 2.25 0 0 0 1.724.804h1.947l-1.017-1.018a.75.75 0 1 1 1.06-1.06l2.306 2.306a.75.75 0 0 1 0 1.06l-2.306 2.306a.75.75 0 1 1-1.06-1.06L14.109 14H12.16a3.75 3.75 0 0 1-2.873-1.34l-1.787-2.14z"/></svg>
         </button>
+        <button class="ctrl-btn" id="repeatBtn" title="Repeat">
+            <svg viewBox="0 0 16 16" id="repeatIcon"><path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75z"/></svg>
+        </button>
         <button class="ctrl-btn" id="likeBtn" title="Save to Liked Songs">
             <svg viewBox="0 0 16 16" id="likeIcon"><path d="M1.69 2A4.582 4.582 0 0 1 8 2.023 4.583 4.583 0 0 1 11.88.817h.002a4.618 4.618 0 0 1 3.782 3.65v.003a4.543 4.543 0 0 1-1.011 3.84L9.35 14.629a1.765 1.765 0 0 1-2.093.464 1.762 1.762 0 0 1-.605-.463L1.348 8.309A4.582 4.582 0 0 1 1.689 2zm3.158.252A3.082 3.082 0 0 0 2.49 7.337l.005.005L7.8 13.664a.264.264 0 0 0 .311.069.262.262 0 0 0 .09-.069l5.312-6.33a3.043 3.043 0 0 0 .68-2.573 3.118 3.118 0 0 0-2.551-2.463 3.079 3.079 0 0 0-2.612.816l-.007.007a1.501 1.501 0 0 1-2.045 0l-.009-.008a3.082 3.082 0 0 0-2.121-.861z"/></svg>
         </button>
@@ -953,6 +959,159 @@
 </html>`);
     doc.close();
     initStarryNightBackground(win);
+
+    // Get elements
+    const menuBtn = doc.getElementById("menuBtn");
+    const settingsPanel = doc.getElementById("settingsPanel");
+    const settingsClose = doc.getElementById("settingsClose");
+    const prevBtn = doc.getElementById("prevBtn");
+    const playBtn = doc.getElementById("playBtn");
+    const nextBtn = doc.getElementById("nextBtn");
+    const shuffleBtn = doc.getElementById("shuffleBtn");
+    const repeatBtn = doc.getElementById("repeatBtn");
+    const likeBtn = doc.getElementById("likeBtn");
+    const themeStyles = doc.getElementById("themeStyles");
+    const openThemePickerBtn = doc.getElementById("openThemePicker");
+    const currentThemeEmoji = doc.getElementById("currentThemeEmoji");
+    const currentThemeName = doc.getElementById("currentThemeName");
+    const themePicker = doc.getElementById("themePicker");
+    const themePickerBack = doc.getElementById("themePickerBack");
+    const themeGrid = doc.getElementById("themeGrid");
+    const closeBtn = doc.getElementById("closeBtn");
+
+    // Close miniplayer
+    closeBtn.onclick = () => {
+      win.close();
+    };
+
+    // Settings panel toggle
+    menuBtn.onclick = (e) => {
+      e.stopPropagation();
+      settingsPanel.classList.add("open");
+    };
+
+    // Close settings panel
+    settingsClose.onclick = () => {
+      settingsPanel.classList.remove("open");
+    };
+
+    // Open theme picker panel
+    openThemePickerBtn.onclick = () => {
+      themePicker.classList.add("open");
+    };
+
+    // Close theme picker panel (back to settings)
+    themePickerBack.onclick = () => {
+      themePicker.classList.remove("open");
+    };
+
+    // Theme selection
+    themeGrid.onclick = (e) => {
+      const themeItem = e.target.closest(".theme-item");
+      if (themeItem) {
+        const newTheme = themeItem.dataset.theme;
+        if (newTheme && THEMES[newTheme]) {
+          currentTheme = newTheme;
+          localStorage.setItem("miniplayer-theme", currentTheme);
+
+          // Update styles
+          themeStyles.textContent = generateStyles(currentTheme);
+
+          // Update theme button
+          currentThemeEmoji.textContent = THEMES[currentTheme].emoji;
+          currentThemeName.textContent = THEMES[currentTheme].name;
+
+          // Update active state
+          doc.querySelectorAll(".theme-item").forEach((item) => {
+            item.classList.toggle(
+              "active",
+              item.dataset.theme === currentTheme,
+            );
+          });
+
+          // Close picker after selection
+          themePicker.classList.remove("open");
+        }
+      }
+    };
+
+    // Control handlers
+    prevBtn.onclick = () => Spicetify.Player.back();
+    playBtn.onclick = () => Spicetify.Player.togglePlay();
+    nextBtn.onclick = () => Spicetify.Player.next();
+
+    const pendingControlSyncTimeouts = new Set();
+    function scheduleControlSync(delayMs) {
+      const timeoutId = win.setTimeout(() => {
+        pendingControlSyncTimeouts.delete(timeoutId);
+        syncControlStates();
+      }, delayMs);
+      pendingControlSyncTimeouts.add(timeoutId);
+    }
+
+    function clearPendingControlSyncs() {
+      pendingControlSyncTimeouts.forEach((timeoutId) => {
+        win.clearTimeout(timeoutId);
+      });
+      pendingControlSyncTimeouts.clear();
+    }
+
+    function queueDelayedControlSyncs() {
+      scheduleControlSync(120);
+      scheduleControlSync(300);
+      scheduleControlSync(550);
+    }
+
+    shuffleBtn.onclick = () => {
+      Spicetify.Player.toggleShuffle();
+      queueDelayedControlSyncs();
+    };
+    repeatBtn.onclick = () => {
+      console.log("[Prettier Miniplayer] Repeat toggle requested");
+      Spicetify.Player.toggleRepeat();
+      queueDelayedControlSyncs();
+    };
+
+    likeBtn.onclick = () => {
+      Spicetify.Player.toggleHeart();
+    };
+
+    // Update shuffle button state
+    function updateShuffleState() {
+      const isShuffled = Spicetify.Player.getShuffle();
+      shuffleBtn.classList.toggle("shuffle-on", isShuffled);
+    }
+
+    // Update repeat button state
+    function updateRepeatState() {
+      const repeatState = Spicetify.Player.getRepeat();
+      const iconSvg = {
+        0: `<svg viewBox="0 0 16 16" id="repeatIcon" state="${repeatState}"><path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75z"/></svg>`,
+        1: `<svg viewBox="0 0 16 16" id="repeatIcon" state="${repeatState}"><path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75z"/></svg>`,
+        2: `<svg viewBox="0 0 16 16" id="repeatIcon" state="${repeatState}"><path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h.75v1.5h-.75A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75zM12.25 2.5a2.25 2.25 0 0 1 2.25 2.25v5A2.25 2.25 0 0 1 12.25 12H9.81l1.018-1.018a.75.75 0 0 0-1.06-1.06L6.939 12.75l2.829 2.828a.75.75 0 1 0 1.06-1.06L9.811 13.5h2.439A3.75 3.75 0 0 0 16 9.75v-5A3.75 3.75 0 0 0 12.25 1h-.75v1.5z"></path><path d="m8 1.85.77.694H6.095V1.488q1.046-.077 1.507-.385.474-.308.583-.913h1.32V8H8z"></path><path d="M8.77 2.544 8 1.85v.693z"></path></svg>`,
+      };
+      repeatBtn.innerHTML = iconSvg[repeatState] || iconSvg[0];
+      repeatBtn.classList.toggle("repeat-on", repeatState > 0);
+      repeatBtn.title =
+        repeatState === 2
+          ? "Repeat One"
+          : repeatState === 1
+            ? "Repeat All"
+            : "Repeat Off";
+    }
+
+    function syncControlStates() {
+      updateShuffleState();
+      updateRepeatState();
+    }
+
+    const controlSyncIntervalId = win.setInterval(syncControlStates, 500);
+    win.addEventListener("beforeunload", () => {
+      win.clearInterval(controlSyncIntervalId);
+      clearPendingControlSyncs();
+    });
+
+    syncControlStates();
   }
 
   async function createButton() {
@@ -961,7 +1120,7 @@
       container = document.querySelector(
         '.spicetify-sc-scroller[role="list"] > [role="presentation"]',
       );
-      if (!container) await new Promise((r) => setTimeout(r, 350));
+      if (!container) await new Promise((r) => setTimeout(r, 200));
     }
 
     const btn = document.createElement("button");
