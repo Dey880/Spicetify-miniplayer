@@ -130,11 +130,6 @@
             background: transparent;
         }
 
-        body > *:not(.starrynight-bg-container) {
-            position: relative;
-            z-index: 1;
-        }
-
         .star {
             position: absolute;
             border-radius: 50%;
@@ -255,6 +250,7 @@
         }
 
         .album-art {
+            cursor: default;
             width: 40px;
             height: 40px;
             border-radius: 6px;
@@ -367,7 +363,7 @@
         }
 
         @keyframes panelSlide {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -409,6 +405,7 @@
             flex: 1;
             padding: 16px;
             overflow-y: auto;
+            height: 100vh;
         }
 
         .menu-section-title {
@@ -872,8 +869,8 @@
 </head>
 <body>
     <div class="starrynight-bg-container" id="starryBg"></div>
-    <div class="resize-handle" id="resizeHandle" title="Drag to resize"></div>
-    <div class="header" id="dragHeader" title="Drag to move window">
+    <div class="resize-handle" id="resizeHandle"></div>
+    <div class="header" id="dragHeader">
         <img class="album-art" id="albumArt" src="" alt="">
         <div class="track-info">
             <div class="track-title" id="trackTitle">Loading...</div>
