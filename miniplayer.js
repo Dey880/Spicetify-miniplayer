@@ -79,7 +79,7 @@
   } catch (e) {}
 
   //
-  //                   NEED DOING !!! ???
+  //                   NEED REFINERY !!! ???
   //
   // Generate CSS with theme
   function generateStyles(theme) {
@@ -697,14 +697,6 @@
           color: var(--accent);
         }
 
-        .ctrl-btn.liked {
-            color: var(--accent);
-        }
-
-        .ctrl-btn.liked svg {
-            fill: var(--accent);
-        }
-
         .ctrl-btn.hidden {
             display: none;
         }
@@ -951,9 +943,6 @@
         <button class="ctrl-btn" id="repeatBtn" title="Repeat">
             <svg viewBox="0 0 16 16" id="repeatIcon"><path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75z"/></svg>
         </button>
-        <button class="ctrl-btn" id="likeBtn" title="Save to Liked Songs">
-            <svg viewBox="0 0 16 16" id="likeIcon"><path d="M1.69 2A4.582 4.582 0 0 1 8 2.023 4.583 4.583 0 0 1 11.88.817h.002a4.618 4.618 0 0 1 3.782 3.65v.003a4.543 4.543 0 0 1-1.011 3.84L9.35 14.629a1.765 1.765 0 0 1-2.093.464 1.762 1.762 0 0 1-.605-.463L1.348 8.309A4.582 4.582 0 0 1 1.689 2zm3.158.252A3.082 3.082 0 0 0 2.49 7.337l.005.005L7.8 13.664a.264.264 0 0 0 .311.069.262.262 0 0 0 .09-.069l5.312-6.33a3.043 3.043 0 0 0 .68-2.573 3.118 3.118 0 0 0-2.551-2.463 3.079 3.079 0 0 0-2.612.816l-.007.007a1.501 1.501 0 0 1-2.045 0l-.009-.008a3.082 3.082 0 0 0-2.121-.861z"/></svg>
-        </button>
     </div>
 </body>
 </html>`);
@@ -969,7 +958,6 @@
     const nextBtn = doc.getElementById("nextBtn");
     const shuffleBtn = doc.getElementById("shuffleBtn");
     const repeatBtn = doc.getElementById("repeatBtn");
-    const likeBtn = doc.getElementById("likeBtn");
     const themeStyles = doc.getElementById("themeStyles");
     const openThemePickerBtn = doc.getElementById("openThemePicker");
     const currentThemeEmoji = doc.getElementById("currentThemeEmoji");
@@ -1067,13 +1055,8 @@
       queueDelayedControlSyncs();
     };
     repeatBtn.onclick = () => {
-      console.log("[Prettier Miniplayer] Repeat toggle requested");
       Spicetify.Player.toggleRepeat();
       queueDelayedControlSyncs();
-    };
-
-    likeBtn.onclick = () => {
-      Spicetify.Player.toggleHeart();
     };
 
     // Update shuffle button state
@@ -1105,15 +1088,86 @@
       updateRepeatState();
     }
 
+    // Handle window close
+    win.addEventListener("pagehide", () => {
+      pipWindow = null;
+    });
+
+    // First initial load and retry after small delay if fail
+    async function initialLoad() {
+      const track = Spicetify.Player.data?.item;
+      if (track?.uri) currentTrackUri = track.uri;
+      else setTimeout(initialLoad, 200);
+    }
+
     const controlSyncIntervalId = win.setInterval(syncControlStates, 500);
     win.addEventListener("beforeunload", () => {
       win.clearInterval(controlSyncIntervalId);
       clearPendingControlSyncs();
     });
 
+    initialLoad();
+    updatePipContent();
     syncControlStates();
+    startUpdateLoop();
   }
 
+  function updatePipContent() {
+    if (!pipWindow || pipWindow.closed) return;
+    const doc = pipWindow.document;
+    const data = Spicetify.Player.data;
+
+    if (!data?.item) return;
+
+    const track = data.item;
+
+    // Update track info
+    const titleEl = doc.getElementById("trackTitle");
+    const artistEl = doc.getElementById("trackArtist");
+    const albumArtEl = doc.getElementById("albumArt");
+
+    if (titleEl) titleEl.textContent = track.name || "Unknown";
+    if (artistEl)
+      artistEl.textContent =
+        track.artists?.map((a) => a.name).join(", ") || "Unknown";
+    if (albumArtEl) {
+      const imgUrl =
+        track.album?.images?.[0]?.url || track.metadata?.image_url || "";
+      albumArtEl.src = imgUrl;
+    }
+
+    updatePipPlayButton();
+
+    if (track.uri !== currentTrackUri) currentTrackUri = track.uri;
+  }
+
+  function updatePipPlayButton() {
+    if (!pipWindow || pipWindow.closed) return;
+
+    const playIcon = pipWindow.document.getElementById("playIcon");
+    if (!playIcon) return;
+
+    const isPlaying = Spicetify.Player.isPlaying();
+    playIcon.innerHTML = isPlaying
+      ? '<path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>'
+      : '<path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>';
+  }
+
+  function startUpdateLoop() {
+    if (updateIntervalId) clearInterval(updateIntervalId);
+
+    updateIntervalId = setInterval(() => {
+      if (!pipWindow || pipWindow.closed) {
+        clearInterval(updateIntervalId);
+        updateIntervalId = null;
+        return;
+      }
+
+      updatePipPlayButton();
+    }, CONFIG.updateInterval);
+  }
+
+  // Button Creation
   async function createButton() {
     let container;
     while (!container) {
@@ -1177,5 +1231,17 @@
 
     container.appendChild(btn);
   }
+
+  // Event Listeners
+  Spicetify.Player.addEventListener("songchange", () => {
+    updatePipContent();
+  });
+
+  Spicetify.Player.addEventListener("onplaypause", () => {
+    updatePipPlayButton();
+  });
+
+  // INIT
   createButton();
+  console.log("[Prettier Miniplayer] Ready!");
 })();
