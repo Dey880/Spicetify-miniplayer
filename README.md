@@ -5,6 +5,8 @@ Decided to make a miniplayer myself since i didnt really like the stock one and 
 
 Credit goes to FO-SS and the StarryNight contributors for the base and style respectively <3<3<3
 
+90 % of what i wrote was during 2-4 am so the quality of those parts i dont know, the same with this readme.md so there are prob weird stuff or mistakes.
+
 # Installation
 
 put miniplayer.js in `%appdata%\Roaming\spicetify\Extensions` and run `spicetify config extension miniplayer.js` and then `spicetify apply` to apply. you will now have a new button on your top bar :þ enjoy!"
