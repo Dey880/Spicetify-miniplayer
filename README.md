@@ -1,12 +1,38 @@
-# THIS IS BASICALLY A CUSTOMIZED AND RE-SKINNED OF [Lyrics Miniplayer](https://github.com/FO-SS/Spictify-Lyric-Miniplayer) BY [FO-SS](https://github.com/FO-SS), TO THE THEME [StarryNight](https://github.com/spicetify/spicetify-themes/tree/master/StarryNight) SO I DIDN'T REALLY DO ANYTHING HERE ! ! !
+# StarryNight Miniplayer
 
-# schitzo rambling
-Decided to make a miniplayer myself since i didnt really like the stock one and there werent any good alternatives :p. was using the starryNights Forest theme when developing so it mirrors the design, dont think any other themes would break, but i can't guarantee compatability. Most of the code were 'borrowed' from [Lyrics Miniplayer](https://github.com/FO-SS/Spictify-Lyric-Miniplayer) but i removed stuff i didn't see nessesairy in my miniplayer and added other stuff like a repeat toggle, a different html buildup, but the base is nearly identical...
+A customized and reskinned version of the [Lyrics Miniplayer](https://github.com/FO-SS/Spictify-Lyric-Miniplayer) by [FO-SS](https://github.com/FO-SS), adapted to match the [StarryNight](https://github.com/spicetify/spicetify-themes/tree/master/StarryNight) theme.
 
-Credit goes to FO-SS and the StarryNight contributors for the base and style respectively <3<3<3
+## Overview
 
-90 % of what i wrote was during 2-4 am so the quality of those parts i dont know, the same with this readme.md so there are prob weird stuff or mistakes.
+I built this miniplayer because I wasn’t satisfied with the default one and couldn’t find alternatives that fit my preferences. It was developed using the StarryNight *Forest* variant, so the design closely follows that aesthetic.
 
-# Installation
+While it should work with other themes, compatibility isn’t guaranteed.
 
-put miniplayer.js in `%appdata%\Roaming\spicetify\Extensions` and run `spicetify config extension miniplayer.js` and then `spicetify apply` to apply. you will now have a new button on your top bar :þ enjoy!"
+Most of the code is based on the original Lyrics Miniplayer, with some simplifications and additions:
+- Removed features I didn’t find necessary
+- Added a repeat toggle
+- Adjusted the HTML structure
+
+Overall, the core functionality remains very similar to the original project.
+
+## Credits
+
+All credit goes to:
+- [FO-SS](https://github.com/FO-SS) for the original Lyrics Miniplayer
+- StarryNight theme contributors for the visual design
+
+## Installation
+
+1. Place `miniplayer.js` in:
+   ```
+   %appdata%\Roaming\spicetify\Extensions
+   ```
+2. Run the following commands:
+   ```
+   spicetify config extension miniplayer.js
+   spicetify apply
+   ```
+
+After applying, a new button will appear in the top bar.
+
+Enjoy 🎵
