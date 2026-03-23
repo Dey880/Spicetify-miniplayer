@@ -1442,7 +1442,4 @@ body {
   // INIT
   createButton();
   console.log("[Prettier Miniplayer] Ready!");
-
-  // Added because clicking every time i spicetify apply is too much :þ
-  openPictureInPicture();
 })();
