@@ -18,7 +18,7 @@
     updateInterval: 100,
   };
 
-  // Themes
+  // Themes, Need more !
   const THEMES = {
     spotify: {
       name: "Spotify",
@@ -78,9 +78,7 @@
     if (savedTheme && THEMES[savedTheme]) currentTheme = savedTheme;
   } catch (e) {}
 
-  //
-  //                   NEED REFINERY !!! ???
-  //
+
   // Generate CSS with theme
   function generateStyles(theme) {
     const t = THEMES[theme] || THEMES.spotify;
@@ -808,7 +806,7 @@ body {
       return;
     }
 
-    // Reset track URI ???
+    // Reset track URI
     currentTrackUri = null;
 
     // Check for Document Picture-in-Picture API (Chrome 116+)
