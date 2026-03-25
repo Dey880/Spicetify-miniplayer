@@ -89,6 +89,7 @@
   --accent: ${t.accent};
   --accent-hover: ${t.accentHover};
   --text-glow: ${t.textGlow};
+  --ui-scale: 1;
 }
 
 *,
@@ -289,8 +290,8 @@ body {
   justify-content: space-between;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
+  gap: calc(10px * var(--ui-scale));
+  padding: calc(10px * var(--ui-scale)) calc(12px * var(--ui-scale));
   background: ${t.headerBg};
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -317,13 +318,13 @@ body {
 .album-art {
   animation: spin 25s linear infinite;
   animation-play-state: paused;
-  margin: 15px 0 0 0;
-  width: 220px;
-  height: 220px;
+  margin: calc(15px * var(--ui-scale)) 0 0 0;
+  width: calc(220px * var(--ui-scale));
+  height: calc(220px * var(--ui-scale));
   border-radius: 50%;
   cursor: default;
   object-fit: cover;
-  box-shadow: 0 0 5px 5px #ffffff;
+  box-shadow: 0 0 calc(5px * var(--ui-scale)) calc(5px * var(--ui-scale)) #ffffff;
   flex-shrink: 0;
   -webkit-app-region: no-drag;
   app-region: no-drag;
@@ -335,7 +336,7 @@ body {
 }
 
 .track-title {
-  font-size: 12px;
+  font-size: calc(12px * var(--ui-scale));
   font-weight: 600;
   color: #fff;
   white-space: nowrap;
@@ -359,7 +360,7 @@ body {
 }
 
 .track-artist {
-  font-size: 10px;
+  font-size: calc(10px * var(--ui-scale));
   font-weight: 400;
   color: rgba(255, 255, 255, 0.55);
   white-space: nowrap;
@@ -722,8 +723,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 8px;
+  gap: calc(4px * var(--ui-scale));
+  padding: calc(8px * var(--ui-scale));
   flex-shrink: 0;
   -webkit-app-region: no-drag;
   app-region: no-drag;
@@ -733,8 +734,8 @@ body {
   background: rgba(255, 255, 255, 0.08);
   border: none;
   color: #fff;
-  width: 32px;
-  height: 32px;
+  width: calc(32px * var(--ui-scale));
+  height: calc(32px * var(--ui-scale));
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -753,14 +754,14 @@ body {
 }
 
 .ctrl-btn svg {
-  width: 14px;
-  height: 14px;
+  width: calc(14px * var(--ui-scale));
+  height: calc(14px * var(--ui-scale));
   fill: currentColor;
 }
 
 .ctrl-btn.play-btn {
-  width: 38px;
-  height: 38px;
+  width: calc(38px * var(--ui-scale));
+  height: calc(38px * var(--ui-scale));
   background: var(--accent);
   color: #000;
 }
@@ -771,8 +772,8 @@ body {
 }
 
 .ctrl-btn.play-btn svg {
-  width: 16px;
-  height: 16px;
+  width: calc(16px * var(--ui-scale));
+  height: calc(16px * var(--ui-scale));
 }
 
 .ctrl-btn.shuffle-on {
@@ -793,6 +794,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: calc(6px * var(--ui-scale));
 }
 `;
   }
@@ -960,6 +962,13 @@ body {
   function setupPipWindow(win) {
     const doc = win.document;
 
+    function updateUiScale() {
+      const widthScale = win.innerWidth / CONFIG.pipWidth;
+      const heightScale = win.innerHeight / CONFIG.pipHeight;
+      const scale = Math.max(1, Math.min(widthScale, heightScale));
+      doc.documentElement.style.setProperty("--ui-scale", scale.toFixed(3));
+    }
+
     // Build the HTML
     doc.write(`<!doctype html>
 <html lang="en">
@@ -1080,6 +1089,7 @@ body {
   </body>
 </html>`);
     doc.close();
+    updateUiScale();
     initStarryNightBackground(win);
 
     // Get elements
@@ -1099,6 +1109,8 @@ body {
     const themePickerBack = doc.getElementById("themePickerBack");
     const themeGrid = doc.getElementById("themeGrid");
     const closeBtn = doc.getElementById("closeBtn");
+
+    win.addEventListener("resize", updateUiScale);
 
     // Close miniplayer
     closeBtn.onclick = () => {
@@ -1236,6 +1248,7 @@ body {
     const controlSyncIntervalId = win.setInterval(syncControlStates, 500);
     win.addEventListener("beforeunload", () => {
       win.clearInterval(controlSyncIntervalId);
+      win.removeEventListener("resize", updateUiScale);
       clearPendingControlSyncs();
     });
 
