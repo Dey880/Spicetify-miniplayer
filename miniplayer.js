@@ -951,7 +951,7 @@ body {
     build();
     win.addEventListener("resize", () => {
       if (pipWindow.innerHeight < 380) {
-        pipWindow.resizeTo(pipWindow.innerWidth, 380);
+        pipWindow.resizeTo(pipWindow.innerWidth, 390);
       }
       build();
     });
