@@ -1,4 +1,4 @@
-// Prettier Miniplayer
+// Pocket Player Miniplayer
 // Made by Dey <3
 
 (async function Miniplayer() {
@@ -18,7 +18,7 @@
     updateInterval: 100,
   };
 
-  // Themes, Need more !
+  // Themes
   const THEMES = {
     spotify: {
       name: "Spotify",
@@ -373,7 +373,7 @@ body {
 .album-art {
   animation: spin 25s linear infinite;
   animation-play-state: paused;
-  margin: calc(15px * var(--ui-scale)) 0 0 0;
+  margin: calc(15px * var(--ui-scale));
   width: calc(220px * var(--ui-scale));
   height: calc(220px * var(--ui-scale));
   border-radius: 50%;
@@ -878,7 +878,7 @@ body {
         return;
       } catch (err) {
         console.log(
-          "[Prettier Miniplayer] Document PiP failed, trying fallback:",
+          "[Pocket Player] Document PiP failed, trying fallback:",
           err,
         );
       }
@@ -889,7 +889,7 @@ body {
       const top = 30;
       pipWindow = window.open(
         "about:blank",
-        "Prettier Miniplayer",
+        "Pocket Player",
         `width=${CONFIG.pipWidth},height=${CONFIG.pipHeight},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,status=no`,
       );
       if (pipWindow) {
@@ -898,7 +898,7 @@ body {
         Spicetify.showNotification("Could not open miniplayer window", true);
       }
     } catch (err) {
-      console.error("[Prettier Miniplayer] Fallback popup failed:", err);
+      console.error("[Pocket Player] Fallback popup failed:", err);
       Spicetify.showNotification("Could not open miniplayer window", true);
     }
   }
@@ -1030,7 +1030,7 @@ body {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prettier Miniplayer</title>
+    <title>Pocket Player</title>
     <style id="themeStyles">
       ${generateStyles(currentTheme)}
     </style>
@@ -1040,7 +1040,7 @@ body {
     <div class="resize-handle" id="resizeHandle"></div>
     <div class="header" id="dragHeader">
       <div>
-        Prettier Miniplayer
+        Pocket Player
       </div>
       <div class="header-btns">
         <button class="menu-btn" id="menuBtn" title="Settings">
@@ -1507,5 +1507,5 @@ body {
 
   // INIT
   createButton();
-  console.log("[Prettier Miniplayer] Ready!");
+  console.log("[Pocket Player] Ready!");
 })();
