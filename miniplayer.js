@@ -126,13 +126,180 @@
   let currentTrackUri = null;
   let updateIntervalId = null;
   let currentTheme = "forest";
+  let isCdOverlayEnabled = false;
+  let cdAssetsPromise = null;
+  function logCd(...args) {}
+
+  function logCdError(...args) {
+    console.error("[Pocket Player][CD]", ...args);
+  }
 
   // Load saved settings
   try {
     const savedTheme = localStorage.getItem("miniplayer-theme");
     if (savedTheme && THEMES[savedTheme]) currentTheme = savedTheme;
+    const savedIsCdOverlayEnabled = localStorage.getItem(
+      "miniplayer-cd-overlay",
+    );
+    if (savedIsCdOverlayEnabled !== null)
+      isCdOverlayEnabled = savedIsCdOverlayEnabled === "true";
   } catch (e) {}
 
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        resolve(img);
+      };
+      img.onerror = (err) => {
+        logCdError("loadImage:error", { src, err });
+        reject(err);
+      };
+      img.src = src;
+    });
+  }
+
+  function resolveCanvasImageUrl(src) {
+    if (!src || typeof src !== "string") return "";
+
+    if (src.startsWith("spotify:image:")) {
+      const imageId = src.split(":")[2];
+      if (!imageId) return "";
+      const resolvedUrl = `https://i.scdn.co/image/${imageId}`;
+      return resolvedUrl;
+    }
+
+    return src;
+  }
+
+  function getCdAssets() {
+    if (!cdAssetsPromise) {
+      const overlayUrl =
+        "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/ce4378e8-006f-4db2-9d4b-d9be00237eba/d2emsdv-a5921ff2-1254-47d1-bd73-4222fcdd3d79.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi9jZTQzNzhlOC0wMDZmLTRkYjItOWQ0Yi1kOWJlMDAyMzdlYmEvZDJlbXNkdi1hNTkyMWZmMi0xMjU0LTQ3ZDEtYmQ3My00MjIyZmNkZDNkNzkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.yjC6W8AmV_tgZ2EPluQ1wlDFAvOBAlXJkW2_GvRYevE";
+      cdAssetsPromise = loadImage(overlayUrl)
+        .then((overlay) => {
+          return { overlay };
+        })
+        .catch((err) => {
+          logCdError("getCdAssets:error", { err });
+          throw err;
+        });
+    } else {
+      logCd("getCdAssets:reuse-cache");
+    }
+
+    return cdAssetsPromise;
+  }
+
+  function renderPlainAlbum(ctx, canvas, albumImg) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(albumImg, 0, 0, canvas.width, canvas.height);
+  }
+
+  function renderCdAlbum(ctx, canvas, albumImg, overlayImg) {
+    const size = canvas.width;
+    const center = size / 2;
+    const discRadius = size / 2;
+    const holeRadius = size * 0.16;
+    const offscreen = document.createElement("canvas");
+    offscreen.width = size;
+    offscreen.height = size;
+    const offscreenCtx = offscreen.getContext("2d", { alpha: true });
+
+    if (!offscreenCtx) {
+      renderPlainAlbum(ctx, canvas, albumImg);
+      return;
+    }
+
+    offscreenCtx.save();
+    offscreenCtx.beginPath();
+    offscreenCtx.arc(center, center, discRadius, 0, Math.PI * 2);
+    offscreenCtx.clip();
+    offscreenCtx.drawImage(albumImg, 0, 0, size, size);
+    offscreenCtx.globalCompositeOperation = "destination-out";
+    offscreenCtx.beginPath();
+    offscreenCtx.arc(center, center, holeRadius, 0, Math.PI * 2);
+    offscreenCtx.fill();
+    offscreenCtx.restore();
+
+    ctx.clearRect(0, 0, size, size);
+    ctx.drawImage(offscreen, 0, 0);
+    ctx.drawImage(overlayImg, 0, 0, size, size);
+
+    ctx.beginPath();
+    ctx.arc(center, center, holeRadius + 3, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,0.25)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  function drawAlbumCanvas(canvas, albumUrl, options = {}) {
+    if (!canvas) {
+      logCd("drawAlbumCanvas:missing-canvas");
+      return;
+    }
+
+    const { cdEffect = false } = options;
+    const size = 500;
+    canvas.width = size;
+    canvas.height = size;
+    const resolvedAlbumUrl = resolveCanvasImageUrl(albumUrl);
+
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) {
+      logCd("drawAlbumCanvas:no-2d-context");
+      return;
+    }
+
+    if (!resolvedAlbumUrl) {
+      logCd("drawAlbumCanvas:no-album-url-clear");
+      ctx.clearRect(0, 0, size, size);
+      return;
+    }
+
+    const renderToken = `${Date.now()}-${Math.random()}`;
+    canvas.dataset.renderToken = renderToken;
+
+    const renderIfFresh = (renderer) => {
+      if (canvas.dataset.renderToken !== renderToken) {
+        logCd("drawAlbumCanvas:stale-render-skip", { renderToken });
+        return;
+      }
+      renderer();
+    };
+
+    loadImage(resolvedAlbumUrl)
+      .then((album) => {
+        if (!cdEffect) {
+          renderIfFresh(() => renderPlainAlbum(ctx, canvas, album));
+          return;
+        }
+
+        getCdAssets()
+          .then(({ overlay }) => {
+            renderIfFresh(() => renderCdAlbum(ctx, canvas, album, overlay));
+          })
+          .catch((err) => {
+            logCdError("drawAlbumCanvas:overlay-failed-fallback-plain", {
+              err,
+            });
+            renderIfFresh(() => renderPlainAlbum(ctx, canvas, album));
+          });
+      })
+      .catch((err) => {
+        logCdError("drawAlbumCanvas:album-load-failed", {
+          albumUrl,
+          resolvedAlbumUrl,
+          err,
+        });
+        if (canvas.dataset.renderToken !== renderToken) {
+          logCd("drawAlbumCanvas:album-load-failed-stale-skip");
+          return;
+        }
+        ctx.clearRect(0, 0, size, size);
+      });
+  }
 
   // Generate CSS with theme
   function generateStyles(theme) {
@@ -379,7 +546,6 @@ body {
   border-radius: 50%;
   cursor: default;
   object-fit: cover;
-  box-shadow: 0 0 calc(5px * var(--ui-scale)) calc(5px * var(--ui-scale)) #ffffff;
   flex-shrink: 0;
   -webkit-app-region: no-drag;
   app-region: no-drag;
@@ -877,10 +1043,7 @@ body {
         setupPipWindow(pipWindow);
         return;
       } catch (err) {
-        console.log(
-          "[Pocket Player] Document PiP failed, trying fallback:",
-          err,
-        );
+        logCdError("openPictureInPicture:document-pip-failed", { err });
       }
     }
     // Fallback: Regular popup window
@@ -893,11 +1056,14 @@ body {
         `width=${CONFIG.pipWidth},height=${CONFIG.pipHeight},left=${left},top=${top},resizable=yes,scrollbars=no,toolbar=no,status=no`,
       );
       if (pipWindow) {
+        logCd("openPictureInPicture:using-popup-fallback");
         setupPipWindow(pipWindow);
       } else {
+        logCd("openPictureInPicture:popup-blocked");
         Spicetify.showNotification("Could not open miniplayer window", true);
       }
     } catch (err) {
+      logCdError("openPictureInPicture:popup-failed", { err });
       console.error("[Pocket Player] Fallback popup failed:", err);
       Spicetify.showNotification("Could not open miniplayer window", true);
     }
@@ -1080,6 +1246,12 @@ body {
           <span class="theme-btn-arrow">›</span>
         </button>
         <div class="menu-divider"></div>
+
+        <div class="menu-section-title">🖥️ Display</div>
+        <div class="menu-item" id="toggleCdOverlayItem" role="switch" aria-label="CD overlay">
+          <span class="menu-item-label">CD Overlay</span>
+          <div class="menu-toggle ${isCdOverlayEnabled ? "on" : ""}" id="toggleCdOverlay" aria-checked="false"></div>
+        </div>
       </div>
     </div>
 
@@ -1094,7 +1266,7 @@ body {
 
     <div class="main-content">
       <div class="trackInfo">
-        <img class="album-art" id="albumArt" src="" alt="" />
+        <canvas class="album-art" id="cd-canvas" aria-label="Album art"></canvas>
         <div class="track-info">
           <div class="track-title" id="trackTitle">Loading...</div>
           <div class="track-artist" id="trackArtist">-</div>
@@ -1164,8 +1336,36 @@ body {
     const themePickerBack = doc.getElementById("themePickerBack");
     const themeGrid = doc.getElementById("themeGrid");
     const closeBtn = doc.getElementById("closeBtn");
+    const toggleCdOverlayItem = doc.getElementById("toggleCdOverlayItem");
+    const toggleCdOverlay = doc.getElementById("toggleCdOverlay");
+
+    function updateCdToggleUi() {
+      if (!toggleCdOverlay) return;
+      toggleCdOverlay.classList.toggle("on", isCdOverlayEnabled);
+      toggleCdOverlay.setAttribute(
+        "aria-checked",
+        String(isCdOverlayEnabled),
+      );
+    }
+
+    function refreshCurrentAlbumCanvas() {
+      if (!pipWindow || pipWindow.closed) return;
+
+      const activeTrack = Spicetify.Player.data?.item;
+      if (!activeTrack) return;
+
+      const canvas = doc.getElementById("cd-canvas");
+      if (!canvas) return;
+
+      const imageUrl =
+        activeTrack.album?.images?.[2]?.url ||
+        activeTrack.metadata?.image_url ||
+        "";
+      drawAlbumCanvas(canvas, imageUrl, { cdEffect: isCdOverlayEnabled });
+    }
 
     win.addEventListener("resize", updateUiScale);
+    updateCdToggleUi();
 
     // Close miniplayer
     closeBtn.onclick = () => {
@@ -1221,6 +1421,14 @@ body {
           themePicker.classList.remove("open");
         }
       }
+    };
+
+    // Toggle handlers
+    toggleCdOverlayItem.onclick = () => {
+      isCdOverlayEnabled = !isCdOverlayEnabled;
+      updateCdToggleUi();
+      localStorage.setItem("miniplayer-cd-overlay", isCdOverlayEnabled);
+      refreshCurrentAlbumCanvas();
     };
 
     // Control handlers
@@ -1325,7 +1533,7 @@ body {
     // Update track info
     const titleEl = doc.getElementById("trackTitle");
     const artistEl = doc.getElementById("trackArtist");
-    const albumArtEl = doc.getElementById("albumArt");
+    const albumCanvasEl = doc.getElementById("cd-canvas");
     const albumUri = track.album?.uri;
     const albumId = albumUri?.split(":")[2];
     const albumLink = albumId ? `/album/${albumId}` : null;
@@ -1389,10 +1597,12 @@ body {
         artistEl.textContent = "Unknown";
       }
     }
-    if (albumArtEl) {
+    if (albumCanvasEl) {
       const imgUrl =
         track.album?.images?.[2]?.url || track.metadata?.image_url || "";
-      albumArtEl.src = imgUrl;
+      drawAlbumCanvas(albumCanvasEl, imgUrl, { cdEffect: isCdOverlayEnabled });
+    } else {
+      logCd("updatePipContent:album-canvas-missing");
     }
 
     if (track.uri !== currentTrackUri) currentTrackUri = track.uri;
@@ -1405,15 +1615,15 @@ body {
     if (!playIcon) return;
 
     const isPlaying = Spicetify.Player.isPlaying();
-    const albumArt = pipWindow.document.getElementById("albumArt");
+    const albumArt = pipWindow.document.getElementById("cd-canvas");
     if (isPlaying) {
       playIcon.innerHTML =
         '<path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>';
-      albumArt.classList.add("running-animation");
+      albumArt?.classList.add("running-animation");
     } else {
       playIcon.innerHTML =
         '<path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>';
-      albumArt.classList.remove("running-animation");
+      albumArt?.classList.remove("running-animation");
     }
   }
 
