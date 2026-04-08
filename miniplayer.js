@@ -1653,13 +1653,13 @@ body {
 
     const btn = document.createElement("button");
     btn.className =
-      "Button-sc-1dqy6lx-0 Button-buttonTertiary-medium-iconOnly-isUsingKeyboard-useBrowserDefaultFocusStyle e-91000-overflow-wrap-anywhere e-91000-button-tertiary--icon-only link-subtle main-globalNav-navLink main-globalNav-link-icon custom-navlink";
+      "e-10180-legacy-button e-10180-legacy-button-tertiary e-10180-overflow-wrap-anywhere e-10180-button-tertiary--icon-only-medium e-10180-button-tertiary--icon-only e-10180-button-tertiary--text-subdued encore-internal-color-text-subdued link-subtle main-globalNav-navLink main-globalNav-link-icon custom-navlink";
     btn.ariaLabel = "Mini Player";
     btn.setAttribute("data-encore-id", "buttonTertiary");
 
     const spn = document.createElement("span");
     spn.setAttribute("aria-hidden", "true");
-    spn.className = "e-91000-button__icon-wrapper";
+    spn.className = "e-10180-button__icon-wrapper";
 
     const outerSvg = document.createElementNS(
       "http://www.w3.org/2000/svg",
@@ -1669,11 +1669,15 @@ body {
     outerSvg.setAttribute("role", "img");
     outerSvg.setAttribute("aria-hidden", "true");
     outerSvg.setAttribute("class", "e-91000-icon e-91000-baseline");
+    outerSvg.setAttribute("viewBox", "0 0 24 24");
+    outerSvg.setAttribute("width", "24");
+    outerSvg.setAttribute("height", "24");
+    outerSvg.setAttribute("fill", "none");
+    outerSvg.setAttribute("stroke", "currentColor");
+    outerSvg.setAttribute("stroke-width", "2");
     outerSvg.innerHTML = `
-  <svg viewBox="0 0 24 24" fill="none" stroke="none" xmlns="http://www.w3.org/2000/svg" stroke-width="2">
-    <rect width="20" height="16" x="2" y="4" rx="2" stroke="currentColor"/>
-    <rect width="9" height="7" x="13" y="13" rx="2" stroke="currentColor"/>
-  </svg>
+    <rect width="20" height="16" x="2" y="4" rx="2" />
+    <rect width="9" height="7" x="13" y="13" rx="2" />
 `;
 
     const style = document.createElement("style");
