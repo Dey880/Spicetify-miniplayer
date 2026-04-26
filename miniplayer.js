@@ -501,6 +501,8 @@ body {
   height: 4px;
   cursor: ns-resize;
   flex-shrink: 0;
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
 }
 
 .resize-handle:hover {
