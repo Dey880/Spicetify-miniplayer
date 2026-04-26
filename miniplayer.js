@@ -1653,7 +1653,7 @@ body {
 
     const btn = document.createElement("button");
     btn.className =
-      "e-10180-legacy-button e-10180-legacy-button-tertiary e-10180-overflow-wrap-anywhere e-10180-button-tertiary--icon-only-medium e-10180-button-tertiary--icon-only e-10180-button-tertiary--text-subdued encore-internal-color-text-subdued link-subtle main-globalNav-navLink main-globalNav-link-icon custom-navlink";
+      "e-10310-legacy-button e-10310-legacy-button-tertiary e-10310-overflow-wrap-anywhere e-10310-button-tertiary--icon-only-medium e-10310-button-tertiary--icon-only e-10310-button-tertiary--text-subdued encore-internal-color-text-subdued link-subtle main-globalNav-navLink main-globalNav-link-icon custom-navlink";
     btn.ariaLabel = "Mini Player";
     btn.setAttribute("data-encore-id", "buttonTertiary");
 
