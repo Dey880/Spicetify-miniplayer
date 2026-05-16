@@ -556,9 +556,14 @@ body {
 .track-info {
   flex: 1;
   min-width: 0;
-}
+    width: 100%;
+    max-width: 100%;
+  }
 
 .track-title {
+  display: block;
+  width: 100%;
+  max-width: 100%;
   font-size: calc(12px * var(--ui-scale));
   font-weight: 600;
   color: #fff;
@@ -566,6 +571,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   margin-bottom: 1px;
+  padding: 0px 10px;
 }
 
 .track-link,
@@ -583,6 +589,9 @@ body {
 }
 
 .track-artist {
+  display: block;
+  width: 100%;
+  max-width: 100%;
   font-size: calc(10px * var(--ui-scale));
   font-weight: 400;
   color: rgba(255, 255, 255, 0.55);
@@ -1267,7 +1276,7 @@ body {
     </div>
 
     <div class="main-content">
-      <div class="trackInfo">
+      <div class="track-info">
         <canvas class="album-art" id="cd-canvas" aria-label="Album art"></canvas>
         <div class="track-info">
           <div class="track-title" id="trackTitle">Loading...</div>
@@ -1275,7 +1284,7 @@ body {
         </div>
       </div>
       <div class="controls">
-        <button class="ctrl-btn" id="shuffleBtn" title="Shuffle">
+        <button class="ctrl-btn" id="shuffleBtn" title="Toggle Shuffle">
           <svg viewBox="0 0 16 16" id="shuffleIcon">
             <path
               d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a3.75 3.75 0 0 0-2.873 1.34l-6.173 7.356A2.25 2.25 0 0 1 .39 12.5H0V14h.391a3.75 3.75 0 0 0 2.873-1.34l6.173-7.356a2.25 2.25 0 0 1 1.724-.804h1.947l-1.017 1.018a.75.75 0 0 0 1.06 1.06l2.306-2.306a.75.75 0 0 0 0-1.06L13.15.922zM.391 3.5H0V2h.391c1.109 0 2.16.49 2.873 1.34L4.89 5.277l-.979 1.167-1.796-2.14A2.25 2.25 0 0 0 .39 3.5z"
@@ -1344,10 +1353,7 @@ body {
     function updateCdToggleUi() {
       if (!toggleCdOverlay) return;
       toggleCdOverlay.classList.toggle("on", isCdOverlayEnabled);
-      toggleCdOverlay.setAttribute(
-        "aria-checked",
-        String(isCdOverlayEnabled),
-      );
+      toggleCdOverlay.setAttribute("aria-checked", String(isCdOverlayEnabled));
     }
 
     function refreshCurrentAlbumCanvas() {
@@ -1487,10 +1493,10 @@ body {
       repeatBtn.classList.toggle("repeat-on", repeatState > 0);
       repeatBtn.title =
         repeatState === 2
-          ? "Repeat One"
+          ? "Disable repeat"
           : repeatState === 1
-            ? "Repeat All"
-            : "Repeat Off";
+            ? "Enable repeat one"
+            : "Enable repeat";
     }
 
     function syncControlStates() {
@@ -1662,6 +1668,7 @@ body {
     const spn = document.createElement("span");
     spn.setAttribute("aria-hidden", "true");
     spn.className = "e-10180-button__icon-wrapper";
+    spn.style = "height: 24px;";
 
     const outerSvg = document.createElementNS(
       "http://www.w3.org/2000/svg",
